@@ -82,9 +82,10 @@ jobs:
         certificate-password: ${{ secrets.BUILD_CERTIFICATE_PASSWORD }}
 
     - name: Install App Store Connect API key
+      id: app-store-connect-key
       run: |
         APP_STORE_CONNECT_API_KEY_PATH="${{ runner.temp }}/AuthKey.p8"
-        echo "APP_STORE_CONNECT_API_KEY_PATH=$APP_STORE_CONNECT_API_KEY_PATH" >> $GITHUB_ENV
+        echo "path=$APP_STORE_CONNECT_API_KEY_PATH" >> "$GITHUB_OUTPUT"
         echo -n "${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}" | base64 --decode -o "$APP_STORE_CONNECT_API_KEY_PATH"
 
     - name: Archive build
@@ -95,7 +96,7 @@ jobs:
           -destination generic/platform=iOS \
           -archivePath "${{ runner.temp }}/${{ env.ARCHIVE_PATH }}" \
           -allowProvisioningUpdates \
-          -authenticationKeyPath "${{ env.APP_STORE_CONNECT_API_KEY_PATH }}" \
+          -authenticationKeyPath "${{ steps.app-store-connect-key.outputs.path }}" \
           -authenticationKeyID ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }} \
           -authenticationKeyIssuerID ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }} \
           -clonedSourcePackagesDirPath "${{ runner.temp }}/SourcePackages" \
@@ -130,7 +131,7 @@ jobs:
       run: |
         xcodebuild -exportArchive \
           -allowProvisioningUpdates \
-          -authenticationKeyPath "${{ env.APP_STORE_CONNECT_API_KEY_PATH }}" \
+          -authenticationKeyPath "${{ steps.app-store-connect-key.outputs.path }}" \
           -authenticationKeyID ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }} \
           -authenticationKeyIssuerID ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }} \
           -archivePath "${{ runner.temp }}/${{ env.ARCHIVE_PATH }}" \

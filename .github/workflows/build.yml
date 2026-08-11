@@ -101,7 +101,8 @@ jobs:
           -authenticationKeyIssuerID ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }} \
           -clonedSourcePackagesDirPath "${{ runner.temp }}/SourcePackages" \
           -disableAutomaticPackageResolution \
-          CURRENT_PROJECT_VERSION="${{ github.run_number }}"
+          CURRENT_PROJECT_VERSION="${{ github.run_number }}" \
+          GIT_COMMIT_HASH="$(git rev-parse HEAD)"
 
     - name: Write Export Options file
       run: |

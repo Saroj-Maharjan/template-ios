@@ -76,11 +76,10 @@ jobs:
           -clonedSourcePackagesDirPath "${{ runner.temp }}/SourcePackages"
 
     - name: Install code signing certificate
-      uses: "./.github/actions/code-signing-setup"
+      uses: q42/actions/install-certificate@v1
       with:
         build-certificate-base64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
-        p12-password: ${{ secrets.P12_PASSWORD }}
-        keychain-password: ${{ secrets.KEYCHAIN_PASSWORD }}
+        certificate-password: ${{ secrets.BUILD_CERTIFICATE_PASSWORD }}
 
     - name: Install App Store Connect API key
       run: |
